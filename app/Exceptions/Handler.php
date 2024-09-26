@@ -26,8 +26,8 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            $text = (string)view('telegram.error', ['e'=> $e]);
-            Telegram::message(7755461236, $text)->send();
+            $text = (string)view('telegram.log.error', ['e'=> $e]);
+            Telegram::message(env('TELEGRAM_ERROR_CHAT_ID'), $text)->send();
         });
     }
 }

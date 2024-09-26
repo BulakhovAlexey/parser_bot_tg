@@ -10,6 +10,6 @@ class Text extends Webhook
 {
     public function run()
     {
-        Telegram::message($this->chat_id, 'Ваше сообщение принято')->send();
+        Telegram::message($this->chat_id, $this->getMessageBlade('telegram.start', []))->send();
     }
 }

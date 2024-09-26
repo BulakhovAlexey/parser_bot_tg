@@ -10,6 +10,6 @@ class Start extends Webhook
 {
     public function run()
     {
-      return Telegram::message($this->chat_id, 'Привет! я бот, введи /run чтобы начать')->send();
+      return Telegram::message($this->chat_id, $this->getMessageBlade('telegram.start',[]))->send();
     }
 }

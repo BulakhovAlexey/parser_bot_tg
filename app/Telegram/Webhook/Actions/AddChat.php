@@ -11,9 +11,8 @@ use App\Telegram\Webhook\Webhook;
 class AddChat extends Webhook
 {
 
-    public function run()
+    public function run() : void
     {
-//        return true;
         $data = json_decode($this->request->input('callback_query')['data'], true);
         $chat_id = $this->request->input('callback_query')['from']['id'];
         $text = $this->request->input('callback_query')['message']['text'];
@@ -23,7 +22,6 @@ class AddChat extends Webhook
         $chat = Chat::updateOrCreate(['recipient' => $chat_id], [
             'recipient' => $chat_id,
             'chat_to_parse' => '@' . $selectedChat,
-            'street' => null
         ]);
         InlineButton::reset();
         if($chat){
@@ -31,10 +29,9 @@ class AddChat extends Webhook
                 InlineButton::add($key == $selectedId ? '☑️' . $chat : $chat, 'AddChat', ['chat_id' => $key], $key + 1);
             }
             Telegram::editButtons($chat_id, $text, InlineButton::$buttons, $message_id)->send();
-            $text = (string)view('telegram.successChatSelect', compact('selectedChat'));
-            Telegram::message($chat_id, $text)->send();
+            Telegram::message($chat_id, (string)view('telegram.chatSelect.add', ['selectedChat' => $selectedChat]))->send();
         } else {
-            Telegram::message($chat_id, 'Что-то пошло не так... /run')->send();
+            Telegram::message($chat_id,  $this->getMessageBlade('chatSelect.error'))->send();
         }
 
     }
