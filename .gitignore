@@ -19,4 +19,5 @@ yarn-error.log
 /.idea
 /.vscode
 /session.madeline
+public/session.madeline
 *.log
