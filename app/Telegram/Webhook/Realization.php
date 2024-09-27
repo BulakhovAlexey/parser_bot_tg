@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 class Realization
 {
-    public const SELECT_STREET_MESS = '↙️Ответьте↙️ на это сообщение названием улицы, например, 👉 Gogviashvili';
+    public const SELECT_STREET_MESS = '↙️Ответьте↙️ на это сообщение названием улицы, например, 👉 Godziashvili';
 
     protected const Commands = [
         '/start' => Start::class,
