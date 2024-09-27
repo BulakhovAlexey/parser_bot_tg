@@ -26,3 +26,8 @@ Artisan::command('setWebHook', function () {
         ])->json();
     dd($http);
 });
+
+Artisan::command('writeToJson', function () {
+    $client = new \App\ParserClient\TelegramClient();
+    $client->writeHistoryToJSON();
+});

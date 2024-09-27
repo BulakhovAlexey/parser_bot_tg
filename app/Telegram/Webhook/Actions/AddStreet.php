@@ -4,12 +4,15 @@ namespace App\Telegram\Webhook\Actions;
 
 use App\Facades\Telegram;
 use App\Models\Chat;
+use App\ParserClient\TelegramClient;
 use App\Telegram\Webhook\Webhook;
 
 class AddStreet extends Webhook
 {
 
     protected string $street;
+    protected TelegramClient $tgClient;
+    protected int $counter;
     public function run()
     {
         $chat_id = $this->request->input('message')['from']['id'];
@@ -17,14 +20,17 @@ class AddStreet extends Webhook
         $this->getFormatStreet();
 
         if(!$this->checkLength()){
-            Telegram::message($chat_id, $this->getMessageBlade('telegram.street.errorLength', []))->send();
-            return false;
+            return Telegram::message($chat_id, $this->getMessageBlade('telegram.street.errorLength', []))->send();
         }
 
-        if(!$this->streetIsExist()){
-            Telegram::message($chat_id, $this->getMessageBlade('telegram.street.errorExist', []))->send();
-            return false;
+        $this->getStreetCounter();
+
+
+        if($this->counter < 2){
+            return Telegram::message($chat_id, $this->getMessageBlade('telegram.street.errorExist', ['counter' => $this->counter, 'street' => $this->street]))->send();
         }
+
+        Telegram::message($chat_id, $this->getMessageBlade('telegram.street.counter', ['counter' => $this->counter, 'street' => $this->street]))->send();
 
 
         $chat = Chat::updateOrCreate(['recipient' => $chat_id], [
@@ -38,10 +44,16 @@ class AddStreet extends Webhook
     {
         return strlen($this->street) > 3;
     }
-    protected function streetIsExist(): bool
+    protected function getStreetCounter(): int
     {
-        return true;
-        //TODO implement method
+        $data = json_decode(file_get_contents(public_path('chat_histories.json')), true);
+        $this->counter = 0;
+        foreach ($data as $message) {
+            if(strpos($message, ' ' . $this->street . ' ') !== false || strpos($message, $this->street . ',') !== false){
+                $this->counter++;
+            }
+        }
+        return $this->counter ;
     }
     protected function getFormatStreet(): string
     {

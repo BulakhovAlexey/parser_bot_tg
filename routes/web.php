@@ -1,9 +1,7 @@
 <?php
 
 use App\Facades\Telegram;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LoginController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,9 +17,6 @@ Route::get('/', function (){
     Telegram::message(7755461236, 'test');
     return view('welcome');
 });
-//Route::any('/api/authenticate', [LoginController::class, 'authenticate']);
-//Route::get('telegram-authenticate', [LoginController::class, 'telegramAuth'])->middleware('auth');
-
 
 Route::get('/webhook-data', function (\App\Telegram\Webhook\Webhook $webhook){
     dd(\Illuminate\Support\Facades\Cache::get('webhook-data'));
