@@ -12,8 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-//        $schedule->command('app:fetch-telegram-history')->everyMinute();
         $schedule->command('app:fetch-telegram-history')->everySixHours();
+        $schedule->command('app:send-messages-to-users')->everyMinute();
     }
 
     /**

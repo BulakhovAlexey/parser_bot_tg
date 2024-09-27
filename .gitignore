@@ -20,4 +20,5 @@ yarn-error.log
 /.vscode
 /session.madeline
 public/session.madeline
+public/chat_histories.json
 *.log
