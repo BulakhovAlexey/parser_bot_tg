@@ -26,7 +26,7 @@ class AddChat extends Webhook
         InlineButton::reset();
         if($chat){
             foreach (ChatSelect::CHATS as $key => $chat) {
-                InlineButton::add($key == $selectedId ? '☑️' . $chat : $chat, 'AddChat', ['chat_id' => $key], $key + 1);
+                InlineButton::add($key == $selectedId ? '✅' . $chat : $chat, 'AddChat', ['chat_id' => $key], $key + 1);
             }
             Telegram::editButtons($chat_id, $text, InlineButton::$buttons, $message_id)->send();
             Telegram::message($chat_id, (string)view('telegram.chatSelect.add', ['selectedChat' => $selectedChat]))->send();
