@@ -21,4 +21,5 @@ yarn-error.log
 /session.madeline
 public/session.madeline
 public/chat_histories.json
+/public_html
 *.log
