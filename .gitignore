@@ -18,8 +18,9 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/session.madeline
 public/session.madeline
+/session.madeline
+/bot.madeline
 public/chat_histories.json
 /public_html
 *.log
