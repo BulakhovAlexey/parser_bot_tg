@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -20,14 +19,25 @@ Artisan::command('inspire', function () {
 
 
 Artisan::command('setWebHook', function () {
-    $http = \Illuminate\Support\Facades\Http::post('https://api.telegram.org/bot'.env('TELEGRAM_BOT_TOKEN').'/setWebHook',
+    $http = \Illuminate\Support\Facades\Http::post(
+        'https://api.telegram.org/bot' . env('TELEGRAM_BOT_TOKEN') . '/setWebHook',
         [
             'url' => env('APP_URL') . '/api/webhook'
-        ])->json();
+        ]
+    )->json();
     dd($http);
 });
 
+// команды для теста
+// история чатов
 Artisan::command('writeToJson', function () {
     $client = new \App\ParserClient\TelegramClient();
     $client->writeHistoryToJSON();
+});
+
+// слушаем чаты
+Artisan::command('listen', function () {
+    // Запуск бота
+    $client = new \App\ParserClient\TelegramClient();
+    App\ParserClient\TelegramEventHandler::startAndLoop('bot.madeline', $client->getSettings());
 });

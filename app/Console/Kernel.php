@@ -12,8 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('app:fetch-telegram-history')->everySixHours();
-        $schedule->command('app:send-messages-to-users')->everyMinute();
+        $schedule->command('app:fetch-telegram-history')->weeklyOn(1, '1:00'); // обновляем историю чатов
+        $schedule->command('app:listen-updates')->everyTwoMinutes()->withoutOverlapping(
+        ); // запускаем прослушивание входящих сообщений
     }
 
     /**
@@ -21,7 +22,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

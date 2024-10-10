@@ -3,16 +3,17 @@
 namespace App\Console\Commands;
 
 use App\ParserClient\TelegramClient;
+use App\ParserClient\TelegramEventHandler;
 use Illuminate\Console\Command;
 
-class SendMessagesToUsers extends Command
+class ListenTelegramUpdates extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:send-messages-to-users';
+    protected $signature = 'app:listen-updates';
 
     /**
      * The console command description.
@@ -24,9 +25,9 @@ class SendMessagesToUsers extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        $tgClient = new TelegramClient();
-        $tgClient->sendMessagesToUsers();
+        $client = new TelegramClient();
+        TelegramEventHandler::startAndLoop('bot.madeline', $client->getSettings());
     }
 }
