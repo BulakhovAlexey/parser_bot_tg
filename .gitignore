@@ -24,4 +24,5 @@ public/session.madeline
 public/chat_histories.json
 /public_html
 *.log
+*_log
 bash.sh
