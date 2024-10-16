@@ -25,3 +25,5 @@ public/chat_histories.json
 /public_html
 *.log
 bash.sh
+*.gz
+access_log
