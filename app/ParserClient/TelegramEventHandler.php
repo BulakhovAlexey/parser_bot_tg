@@ -11,6 +11,7 @@ use danog\MadelineProto\EventHandler\Message;
 use danog\MadelineProto\EventHandler\Plugin\RestartPlugin;
 use danog\MadelineProto\EventHandler\SimpleFilter\Incoming;
 use danog\MadelineProto\SimpleEventHandler;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class TelegramEventHandler extends SimpleEventHandler
@@ -29,6 +30,12 @@ class TelegramEventHandler extends SimpleEventHandler
         return [
             RestartPlugin::class,
         ];
+    }
+
+    public function onStart(): void
+    {
+        $this->logger("The bot was started at " . Carbon::now()->toDateTimeString());
+        Telegram::message(env('TELEGRAM_ERROR_CHAT_ID'), '‼️ Слушатель чата запущен! ‼️')->send();
     }
 
 

@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.table__row {
+    @apply flex justify-between items-center w-full py-2
+}
+
+.table__cell {
+    @apply flex justify-center items-center px-3 basis-1/6
+}
+
+input.login {
+    @apply border-gray-300 outline-none rounded border-2 p-2 focus:border-blue-600 w-full
+}
+
+input.login.hasError {
+    @apply border-red-500
+}
+
+.input-error {
+    @apply text-red-600 block
+}
+
+button.login {
+    @apply border-blue-400 rounded border-2 outline-none text-blue-400 max-w-[150px] w-full p-2 uppercase hover:text-cyan-50 hover:bg-blue-400 transition-all
+}
+

@@ -2,10 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Facades\Telegram;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Support\Facades\Http;
-use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -26,7 +23,7 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            $text = (string)view('telegram.log.error', ['e'=> $e]);
+            $text = (string)view('telegram.log.error', ['e' => $e]);
             Telegram::message(env('TELEGRAM_ERROR_CHAT_ID'), $text)->send();
         });
     }

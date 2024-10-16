@@ -1,7 +1,7 @@
 <?php
 
-use App\Facades\Telegram;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,11 +13,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function (){
-    Telegram::message(7755461236, 'test');
+Route::get('/', function () {
     return view('welcome');
+})->name('main');
+
+
+Route::middleware("auth")->group(function () {
+    Route::get('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+    Route::get('/chats', [\App\Http\Controllers\ChatController::class, 'index'])->name('chatIndex');
+    Route::get('/chats/{id}/edit', [\App\Http\Controllers\ChatController::class, 'edit'])->name('chatEdit');
+    Route::put('/chats/{id}', [\App\Http\Controllers\ChatController::class, 'update'])->name('chatUpdate');
+    Route::get('/webhook-data', [\App\Http\Controllers\WebhookController::class, 'debug'])->name('webhookData');
 });
 
-Route::get('/webhook-data', function (\App\Telegram\Webhook\Webhook $webhook){
-    dd(\Illuminate\Support\Facades\Cache::get('webhook-data'));
+Route::middleware("guest")->group(function () {
+    Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login_process', [\App\Http\Controllers\AuthController::class, 'login_process'])->name(
+        'login_process'
+    );
 });
+
