@@ -3,13 +3,19 @@
 namespace App\Telegram\Webhook\Text;
 
 use App\Facades\Telegram;
+use App\Telegram\Helpers\InlineButton;
 use App\Telegram\Webhook\Webhook;
-use Illuminate\Support\Facades\Cache;
 
 class Text extends Webhook
 {
-    public function run()
+    public function run(): void
     {
-        Telegram::message($this->chat_id, $this->getMessageBlade('telegram.start', []))->send();
+        InlineButton::getDefault();
+        Telegram::buttons(
+            $this->chat_id,
+            'Выбери команду',
+            InlineButton::$buttons
+        )->send();
     }
+
 }

@@ -4,66 +4,81 @@ namespace App\Telegram\Webhook\Actions;
 
 use App\Facades\Telegram;
 use App\Models\Chat;
-use App\ParserClient\TelegramClient;
+use App\Telegram\Helpers\InlineButton;
 use App\Telegram\Webhook\Webhook;
+use Illuminate\Support\Facades\Cache;
 
 class AddStreet extends Webhook
 {
 
     protected string $street;
-    protected TelegramClient $tgClient;
     protected int $counter;
+
     public function run()
     {
-        $chat_id = $this->request->input('message')['from']['id'];
-
         $this->getFormatStreet();
 
-        if(!$this->checkLength()){
-            return Telegram::message($chat_id, $this->getMessageBlade('telegram.street.errorLength', []))->send();
+        if (!$this->checkLength()) {
+            return Telegram::message($this->chat_id, $this->getMessageBlade('telegram.street.errorLength', []))->send();
         }
 
         $this->getStreetCounter();
 
-
-        if($this->counter < 2){
-            return Telegram::message($chat_id, $this->getMessageBlade('telegram.street.errorExist', ['counter' => $this->counter, 'street' => $this->street]))->send();
+        if ($this->counter < 2) {
+            return Telegram::message(
+                $this->chat_id,
+                $this->getMessageBlade(
+                    'telegram.street.errorExist',
+                    ['counter' => $this->counter, 'street' => $this->street]
+                )
+            )->send();
         }
 
-        Telegram::message($chat_id, $this->getMessageBlade('telegram.street.counter', ['counter' => $this->counter, 'street' => $this->street]))->send();
-
-
-        $chat = Chat::updateOrCreate(['recipient' => $chat_id], [
-            'recipient' => $chat_id,
+        Chat::updateOrCreate(['recipient' => $this->chat_id], [
+            'recipient' => $this->chat_id,
             'street' => $this->street,
         ]);
-        Telegram::message($chat_id,  $this->getMessageBlade('telegram.street.success', ['street' => $this->street]))->send();
+
+        InlineButton::getBackButton();
+
+        Telegram::buttons(
+            $this->chat_id,
+            $this->getMessageBlade('telegram.street.success', [
+                'street' => $this->street,
+                'counter' => $this->counter,
+            ]),
+            InlineButton::$buttons
+        )->send();
+
+        Cache::forget(env('STREET_SELECT_CACHE_KEY') . $this->chat_id);
     }
 
-    protected function checkLength() : bool
+    protected function checkLength(): bool
     {
         return strlen($this->street) > 3;
     }
+
     protected function getStreetCounter(): int
     {
         $data = json_decode(file_get_contents(public_path('chat_histories.json')), true);
         $this->counter = 0;
         foreach ($data as $message) {
-            if(strpos($message, ' ' . $this->street . ' ') !== false || strpos($message, $this->street . ',') !== false){
+            if (str_contains($message, ' ' . $this->street . ' ') || str_contains($message, $this->street . ',')) {
                 $this->counter++;
             }
         }
-        return $this->counter ;
+        return $this->counter;
     }
+
     protected function getFormatStreet(): string
     {
         $street = strtolower($this->request->input('message')['text']);
-        if(strpos($street, ' ') !== false){
-           $streetArray = explode(' ', $street);
-           foreach ($streetArray as &$item){
-               $item = ucfirst($item);
-           }
-           $this->street = implode(' ', $streetArray);
+        if (str_contains($street, ' ')) {
+            $streetArray = explode(' ', $street);
+            foreach ($streetArray as &$item) {
+                $item = ucfirst($item);
+            }
+            $this->street = implode(' ', $streetArray);
         } else {
             $this->street = ucfirst($street);
         }

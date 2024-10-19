@@ -28,6 +28,13 @@ Artisan::command('setWebHook', function () {
     dd($http);
 });
 
+Artisan::command('DeleteWebHook', function () {
+    $http = \Illuminate\Support\Facades\Http::post(
+        'https://api.telegram.org/bot' . env('TELEGRAM_BOT_TOKEN') . '/deleteWebhook',
+    )->json();
+    dd($http);
+});
+
 // команды для теста
 // история чатов
 Artisan::command('writeToJson', function () {

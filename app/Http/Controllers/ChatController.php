@@ -39,7 +39,7 @@ class ChatController extends Controller
             'street' => $data['street'],
             'confirmed' => $request->has('confirmed') ? 1 : 0,
         ];
-        
+
 
         $chat->update($newData);
         $chat->save();

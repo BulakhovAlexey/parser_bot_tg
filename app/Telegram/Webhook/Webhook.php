@@ -3,13 +3,25 @@
 namespace App\Telegram\Webhook;
 
 use App\Facades\Telegram;
-use App\Telegram\Bot\Factory;
 use Illuminate\Http\Request;
 
 class Webhook
 {
     protected Request $request;
     protected $chat_id;
+    protected $message_id;
+
+    public const CHATS_DESCRIPTION = [
+        'WETbilisi_Didube' => 'Didube + Digomi',
+        'WETbilisi_Vake' => 'Vake + Vera',
+        'WETbilisi_Saburtalo' => 'Saburtalo + Didi Digomi + Digomi Village',
+        'WETbilisi_Mtatsminda' => 'Mtatsminda',
+        'WETbilisi_Isani' => 'Isani + Samgori',
+        'WETbilisi_Krtsanisi' => 'Krtsanisi',
+        'WETbilisi_Chugureti' => 'Chugureti',
+        'WETbilisi_Nadzaladevi' => 'Nadzaladevi',
+        'WETbilisi_Gldani' => 'Gldani',
+    ];
     public const CHATS =
         [
             'WETbilisi_Didube',
@@ -26,28 +38,28 @@ class Webhook
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $this->getChatId();
+        $this->getInfo();
     }
 
     public function run()
     {
-       return Telegram::message($this->chat_id, 'Не удалось обработать сообщение!')->send();
+        return Telegram::message($this->chat_id, 'Не удалось обработать сообщение!')->send();
     }
 
-    protected function getMessageBlade($bladePath, array $params) : string
+    protected function getMessageBlade($bladePath, array $params): string
     {
         return (string)view($bladePath, $params);
     }
 
-    final public function getChatId()
+    final public function getInfo()
     {
-        if($this->request->input('callback_query'))
-        {
+        if ($this->request->input('callback_query')) {
             $this->chat_id = $this->request->input('callback_query')['from']['id'];
-        }
-        elseif($this->request->input('message'))
-        {
+            $this->message_id = $this->request->input('callback_query')['message']['message_id'];
+        } elseif ($this->request->input('message')) {
             $this->chat_id = $this->request->input('message')['from']['id'];
+            $this->message_id = $this->request->input('message')['message_id'];
         }
     }
+
 }
